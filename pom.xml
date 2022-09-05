@@ -173,6 +173,7 @@
        <version>4.15.0</version>
        <configuration>
          <propertyFile>${liquibase.config}</propertyFile>
+         <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
        </configuration>
        <executions>
          <execution>
