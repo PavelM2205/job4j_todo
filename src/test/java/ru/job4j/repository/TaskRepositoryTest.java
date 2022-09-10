@@ -48,11 +48,13 @@ public class TaskRepositoryTest {
     public void whenAdd() {
         TaskRepository repo = new TaskRepository(sf);
         Task task = new Task();
+        task.setName("name");
         task.setDescription("Text");
         task.setDone(true);
         repo.add(task);
         Task taskFromDB = repo.findById(task.getId()).get();
         assertThat(task.getId()).isNotEqualTo(0);
+        assertThat(taskFromDB.getName()).isEqualTo(task.getName());
         assertThat(taskFromDB.getId()).isEqualTo(task.getId());
         assertThat(taskFromDB.getCreated()).isEqualTo(task.getCreated());
         assertThat(taskFromDB.isDone()).isEqualTo(task.isDone());
@@ -63,21 +65,25 @@ public class TaskRepositoryTest {
     public void whenAddTwoTasksAndFindAllThenReturnsBoth() {
         TaskRepository repo = new TaskRepository(sf);
         Task task1 = new Task();
+        task1.setName("1");
         task1.setDescription("task #1");
         task1.setDone(true);
         Task task2 = new Task();
         task2.setDescription("task #2");
+        task2.setName("2");
         task2.setDone(false);
         repo.add(task1);
         repo.add(task2);
         List<Task> tasksFromDB = repo.findAll();
         assertThat(tasksFromDB.size()).isEqualTo(2);
         assertThat(tasksFromDB.get(0).getId()).isEqualTo(task1.getId());
+        assertThat(tasksFromDB.get(0).getName()).isEqualTo(task1.getName());
         assertThat(tasksFromDB.get(0).getDescription())
                 .isEqualTo(task1.getDescription());
         assertThat(tasksFromDB.get(0).getCreated()).isEqualTo(task1.getCreated());
         assertThat(tasksFromDB.get(0).isDone()).isEqualTo(task1.isDone());
         assertThat(tasksFromDB.get(1).getId()).isEqualTo(task2.getId());
+        assertThat(tasksFromDB.get(1).getName()).isEqualTo(task2.getName());
         assertThat(tasksFromDB.get(1).getDescription())
                 .isEqualTo(task2.getDescription());
         assertThat(tasksFromDB.get(1).getCreated()).isEqualTo(task2.getCreated());
@@ -88,16 +94,19 @@ public class TaskRepositoryTest {
     public void whenUpdateThenMustBeChangedTask() {
         TaskRepository repo = new TaskRepository(sf);
         Task task = new Task();
+        task.setName("t1");
         task.setDescription("Task");
         task.setDone(false);
         repo.add(task);
         Task changedTask = new Task();
+        changedTask.setName("chName");
         changedTask.setDescription("Changed Task");
         changedTask.setDone(true);
         changedTask.setId(task.getId());
         boolean update = repo.update(changedTask);
         Task taskFromDB = repo.findById(task.getId()).get();
         assertThat(update).isTrue();
+        assertThat(taskFromDB.getName()).isEqualTo(changedTask.getName());
         assertThat(taskFromDB.getDescription()).isEqualTo(changedTask.getDescription());
         assertThat(taskFromDB.getCreated()).isEqualTo(changedTask.getCreated());
         assertThat(taskFromDB.isDone()).isEqualTo(changedTask.isDone());
@@ -107,10 +116,11 @@ public class TaskRepositoryTest {
     public void whenDeleteThenFindAllReturnsListWithSizeZero() {
         TaskRepository repo = new TaskRepository(sf);
         Task task = new Task();
+        task.setName("name");
         task.setDescription("Task");
         task.setDone(false);
         repo.add(task);
-        boolean delete = repo.delete(task);
+        boolean delete = repo.delete(task.getId());
         assertThat(delete).isTrue();
         assertThat(repo.findAll().size()).isEqualTo(0);
     }

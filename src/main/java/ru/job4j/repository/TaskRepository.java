@@ -18,8 +18,12 @@ import java.util.Optional;
 public class TaskRepository {
     private static final Logger LOG = LoggerFactory.getLogger(TaskRepository.class);
     private static final String FIND_BY_ID = "FROM Task as t WHERE t.id = :fId";
+    private static final String UPDATE = "UPDATE Task SET name = :fName, "
+            + "description = :fDescription, created = :fCreated, done = :fDone WHERE id = :fId";
     private static final String FIND_ALL = "FROM Task";
     private static final String DELETE_BY_ID = "DELETE Task WHERE id = :fId";
+    private static final String FIND_ALL_DONE = "FROM Task WHERE done = true";
+    private static final String FIND_ALL_UNDONE = "FROM Task WHERE done = false";
     private final SessionFactory sf;
 
     public Task add(Task task) {
@@ -29,10 +33,10 @@ public class TaskRepository {
             session.persist(task);
             transaction.commit();
         } catch (Exception exc) {
+            LOG.error("Exception when adding Task into DB: ", exc);
             if (transaction != null) {
                 transaction.rollback();
             }
-            LOG.error("Exception when adding Task into DB: ", exc);
         }
         return task;
     }
@@ -42,7 +46,7 @@ public class TaskRepository {
         try (Session session = sf.openSession()) {
             Query<Task> query = session.createQuery(FIND_BY_ID, Task.class)
                     .setParameter("fId", id);
-            result = Optional.of(query.uniqueResult());
+            result = query.uniqueResultOptional();
         } catch (Exception exc) {
             LOG.error("Exception when findById Task into DB: ", exc);
         }
@@ -59,39 +63,65 @@ public class TaskRepository {
         return result;
     }
 
-
-    public boolean update(Task task) {
-        boolean result = false;
-        Transaction transaction = null;
+    public List<Task> findAllDone() {
+        List<Task> result = new ArrayList<>();
         try (Session session = sf.openSession()) {
-            transaction = session.beginTransaction();
-            session.merge(task);
-            transaction.commit();
-            result = true;
+            result = session.createQuery(FIND_ALL_DONE, Task.class).list();
         } catch (Exception exc) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            LOG.error("Exception when update Task into DB: ", exc);
+            LOG.error("Exception when findAllDone from DB: ", exc);
         }
         return result;
     }
 
-    public boolean delete(Task task) {
+    public List<Task> findAllUndone() {
+        List<Task> result = new ArrayList<>();
+        try (Session session = sf.openSession()) {
+            result = session.createQuery(FIND_ALL_UNDONE, Task.class).list();
+        } catch (Exception exc) {
+            LOG.error("Exception when findAllUndone from DB: ", exc);
+        }
+        return result;
+    }
+
+    public boolean update(Task task) {
+        boolean result = false;
+        Transaction transaction = null;
+        int update;
+        try (Session session = sf.openSession()) {
+            transaction = session.beginTransaction();
+            update = session.createMutationQuery(UPDATE)
+                    .setParameter("fName", task.getName())
+                    .setParameter("fDescription", task.getDescription())
+                    .setParameter("fCreated", task.getCreated())
+                    .setParameter("fDone", task.isDone())
+                    .setParameter("fId", task.getId())
+                    .executeUpdate();
+            transaction.commit();
+            result = update > 0;
+        } catch (Exception exc) {
+            LOG.error("Exception when update Task into DB: ", exc);
+            if (transaction != null) {
+                transaction.rollback();
+            }
+        }
+        return result;
+    }
+
+    public boolean delete(int id) {
         boolean result = false;
         Transaction transaction = null;
         int update;
         try (Session session = sf.openSession()) {
             transaction = session.beginTransaction();
             update = session.createMutationQuery(DELETE_BY_ID)
-                            .setParameter("fId", task.getId()).executeUpdate();
+                            .setParameter("fId", id).executeUpdate();
             transaction.commit();
             result = update > 0;
         } catch (Exception exc) {
+            LOG.error("Exception when delete Task from DB: ", exc);
             if (transaction != null) {
                 transaction.rollback();
             }
-            LOG.error("Exception when delete Task from DB: ", exc);
         }
         return result;
     }

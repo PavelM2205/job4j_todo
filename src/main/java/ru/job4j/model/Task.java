@@ -15,6 +15,7 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    private String name;
     private String description;
     private LocalDateTime created = LocalDateTime.now();
     private static final DateTimeFormatter FORMATTER =
@@ -24,7 +25,7 @@ public class Task {
     @Override
     public String toString() {
         return "Task{"
-                + "id=" + id + ", description='" + description + '\''
+                + "id=" + id + ", name=" + name + ", description='" + description + '\''
                 + ", created=" + FORMATTER.format(created)
                 + ", done=" + done + '}';
     }
