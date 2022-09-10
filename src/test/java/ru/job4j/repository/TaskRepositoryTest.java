@@ -26,6 +26,19 @@ public class TaskRepositoryTest {
                 .buildSessionFactory();
     }
 
+    @BeforeAll
+    public static void cleanTableBefore() {
+        Transaction transaction = null;
+        try (Session session = sf.openSession()) {
+            transaction = session.beginTransaction();
+            session.createMutationQuery("DELETE Task").executeUpdate();
+        } catch (Exception exc) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+        }
+    }
+
     @AfterEach
     public void cleanTable() {
         Transaction transaction = null;
@@ -56,7 +69,7 @@ public class TaskRepositoryTest {
         assertThat(task.getId()).isNotEqualTo(0);
         assertThat(taskFromDB.getName()).isEqualTo(task.getName());
         assertThat(taskFromDB.getId()).isEqualTo(task.getId());
-        assertThat(taskFromDB.getCreated()).isEqualTo(task.getCreated());
+        assertThat(taskFromDB.getCreated()).isEqualToIgnoringNanos(task.getCreated());
         assertThat(taskFromDB.isDone()).isEqualTo(task.isDone());
         assertThat(taskFromDB.getDescription()).isEqualTo(task.getDescription());
     }
@@ -75,18 +88,17 @@ public class TaskRepositoryTest {
         repo.add(task1);
         repo.add(task2);
         List<Task> tasksFromDB = repo.findAll();
-        assertThat(tasksFromDB.size()).isEqualTo(2);
         assertThat(tasksFromDB.get(0).getId()).isEqualTo(task1.getId());
         assertThat(tasksFromDB.get(0).getName()).isEqualTo(task1.getName());
         assertThat(tasksFromDB.get(0).getDescription())
                 .isEqualTo(task1.getDescription());
-        assertThat(tasksFromDB.get(0).getCreated()).isEqualTo(task1.getCreated());
+        assertThat(tasksFromDB.get(0).getCreated()).isEqualToIgnoringNanos(task1.getCreated());
         assertThat(tasksFromDB.get(0).isDone()).isEqualTo(task1.isDone());
         assertThat(tasksFromDB.get(1).getId()).isEqualTo(task2.getId());
         assertThat(tasksFromDB.get(1).getName()).isEqualTo(task2.getName());
         assertThat(tasksFromDB.get(1).getDescription())
                 .isEqualTo(task2.getDescription());
-        assertThat(tasksFromDB.get(1).getCreated()).isEqualTo(task2.getCreated());
+        assertThat(tasksFromDB.get(1).getCreated()).isEqualToIgnoringNanos(task2.getCreated());
         assertThat(tasksFromDB.get(1).isDone()).isEqualTo(task2.isDone());
     }
 
@@ -108,7 +120,7 @@ public class TaskRepositoryTest {
         assertThat(update).isTrue();
         assertThat(taskFromDB.getName()).isEqualTo(changedTask.getName());
         assertThat(taskFromDB.getDescription()).isEqualTo(changedTask.getDescription());
-        assertThat(taskFromDB.getCreated()).isEqualTo(changedTask.getCreated());
+        assertThat(taskFromDB.getCreated()).isEqualToIgnoringNanos(changedTask.getCreated());
         assertThat(taskFromDB.isDone()).isEqualTo(changedTask.isDone());
     }
 
