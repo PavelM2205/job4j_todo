@@ -136,4 +136,17 @@ public class TaskRepositoryTest {
         assertThat(delete).isTrue();
         assertThat(repo.findAll().size()).isEqualTo(0);
     }
+
+    @Test
+    public void whenSetDoneThenDoneMustBeTrue() {
+        TaskRepository repo = new TaskRepository(sf);
+        Task task = new Task();
+        task.setName("name");
+        task.setDescription("description");
+        task.setDone(false);
+        repo.add(task);
+        repo.setDone(task.getId());
+        Task taskFromDB = repo.findById(task.getId()).get();
+        assertThat(taskFromDB.isDone()).isTrue();
+    }
 }

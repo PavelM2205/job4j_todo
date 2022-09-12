@@ -24,6 +24,7 @@ public class TaskRepository {
     private static final String DELETE_BY_ID = "DELETE Task WHERE id = :fId";
     private static final String FIND_ALL_DONE = "FROM Task WHERE done = true";
     private static final String FIND_ALL_UNDONE = "FROM Task WHERE done = false";
+    private static final String SET_DONE = "UPDATE Task SET done = true WHERE id = :fId";
     private final SessionFactory sf;
 
     public Task add(Task task) {
@@ -103,6 +104,26 @@ public class TaskRepository {
             if (transaction != null) {
                 transaction.rollback();
             }
+        }
+        return result;
+    }
+
+    public boolean setDone(int id) {
+        Transaction transaction = null;
+        boolean result = false;
+        int update;
+        try (Session session = sf.openSession()) {
+            transaction = session.beginTransaction();
+            update = session.createMutationQuery(SET_DONE)
+                    .setParameter("fId", id)
+                    .executeUpdate();
+            transaction.commit();
+            result = update > 0;
+        } catch (Exception exc) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            LOG.error("Exception when setDone into DB: ", exc);
         }
         return result;
     }

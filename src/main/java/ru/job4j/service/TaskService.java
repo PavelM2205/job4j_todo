@@ -17,8 +17,12 @@ public class TaskService {
         return taskRepository.add(task);
     }
 
-    public Optional<Task> findById(int id) {
-        return taskRepository.findById(id);
+    public Task findById(int id) {
+        Optional<Task> optionalTask = taskRepository.findById(id);
+        if (optionalTask.isEmpty()) {
+            throw new IllegalArgumentException("Task with that id already exists");
+        }
+        return optionalTask.get();
     }
 
     public List<Task> findAll() {
@@ -35,6 +39,10 @@ public class TaskService {
 
     public boolean update(Task task) {
         return taskRepository.update(task);
+    }
+
+    public boolean setDone(int id) {
+        return taskRepository.setDone(id);
     }
 
     public boolean delete(int id) {

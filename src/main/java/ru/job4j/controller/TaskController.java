@@ -8,8 +8,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.job4j.model.Task;
 import ru.job4j.service.TaskService;
 
-import java.util.Optional;
-
 @Controller
 @AllArgsConstructor
 public class TaskController {
@@ -29,35 +27,22 @@ public class TaskController {
 
     @GetMapping("/taskInfoPage/{taskId}")
     public String taskInfoPage(@PathVariable("taskId") int id, Model model) {
-        Optional<Task> optionalTask = taskService.findById(id);
-        if (optionalTask.isPresent()) {
-            model.addAttribute("task", optionalTask.get());
-            return "taskInfo";
-        }
-        return "taskNotFound";
+        model.addAttribute("task", taskService.findById(id));
+        return "taskInfo";
     }
 
     @PostMapping("/madeTaskDone")
     public String madeTaskDone(@RequestParam("task_id") int id,
                                RedirectAttributes redirectAttributes) {
-        Optional<Task> optionalTask = taskService.findById(id);
-        if (optionalTask.isPresent()) {
-            Task task = optionalTask.get();
-            task.setDone(true);
-            taskService.update(task);
-            redirectAttributes.addFlashAttribute("taskDone", true);
-        }
+        taskService.setDone(id);
+        redirectAttributes.addFlashAttribute("taskDone", true);
         return "redirect:/taskInfoPage/" + id;
     }
 
     @GetMapping("/editTaskPage/{taskId}")
     public String editTask(@PathVariable("taskId") int id, Model model) {
-        Optional<Task> optionalTask = taskService.findById(id);
-        if (optionalTask.isPresent()) {
-            model.addAttribute("current_task", optionalTask.get());
-            return "editTask";
-        }
-        return "taskNotFound";
+        model.addAttribute("current_task", taskService.findById(id));
+        return "editTask";
     }
 
     @PostMapping("/editTask")
