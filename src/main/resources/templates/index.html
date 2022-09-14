@@ -28,6 +28,12 @@
                 <a th:href="@{/indexWithUndoneTasks}">Новые</a>
             </span>
             </div>
+            <div class="col-4" style="margin-top: 1%">
+                <a th:href="@{/logout}">
+                    <span th:text="${userName}"></span>
+                    <span>| Выйти</span>
+                </a>
+            </div>
             <div class="col-4" style="margin-right: -15%">
             <a th:href="@{/addTaskPage}">
                 <button class="btn btn-primary" type="submit">Добавить задание</button>
