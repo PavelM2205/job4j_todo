@@ -38,6 +38,9 @@
                     <span style="margin-left: 33%">
                         <a th:href="@{/loginPage}">Авторизация</a>
                     </span>
+                    <div th:if="${alreadyExists}" class="alert alert-danger" role="alert">
+                        Пользователь с таким логином уже существует!
+                    </div>
                 </form>
             </div>
         </div>

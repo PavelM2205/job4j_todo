@@ -7,9 +7,15 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import ru.job4j.exception.TaskNotFoundById;
+import ru.job4j.model.Task;
 import ru.job4j.repository.TaskRepository;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @AllArgsConstructor
 public class TaskServiceTest {
@@ -27,6 +33,15 @@ public class TaskServiceTest {
     public void whenTaskNotExistWithSpecifyIdThenFindByIdThrowsException() {
         TaskRepository repository = new TaskRepository(sf);
         TaskService taskService = new TaskService(repository);
-        assertThrows(IllegalArgumentException.class, () -> taskService.findById(0));
+        assertThrows(TaskNotFoundById.class, () -> taskService.findById(0));
+    }
+
+    @Test
+    public void whenAddTaskReturnsOptionalEmptyThenMustBeException() {
+        TaskRepository taskStore = mock(TaskRepository.class);
+        TaskService service = new TaskService(taskStore);
+        Task task = mock(Task.class);
+        when(taskStore.add(task)).thenReturn(Optional.empty());
+        assertThrows(IllegalStateException.class, () -> service.add(task));
     }
 }

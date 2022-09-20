@@ -3,7 +3,6 @@ package ru.job4j.repository;
 import lombok.AllArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,9 +36,6 @@ public class UserRepository {
         } catch (Exception exc) {
             if (session != null) {
                 session.getTransaction().rollback();
-            }
-            if (exc.getCause() instanceof ConstraintViolationException) {
-                throw new IllegalArgumentException("User with this login already exists");
             }
             LOG.error("Exception when adding User into DB: ", exc);
         }
@@ -81,9 +77,6 @@ public class UserRepository {
         } catch (Exception exc) {
             if (session != null) {
                 session.getTransaction().rollback();
-            }
-            if (exc.getCause() instanceof  ConstraintViolationException) {
-                throw new IllegalArgumentException("User with this login already exists");
             }
             LOG.error("Exception when update User into DB: ", exc);
         }

@@ -2,6 +2,7 @@ package ru.job4j.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.job4j.exception.TaskNotFoundById;
 import ru.job4j.model.Task;
 import ru.job4j.repository.TaskRepository;
 
@@ -14,13 +15,17 @@ public class TaskService {
     private final TaskRepository taskRepository;
 
     public Task add(Task task) {
-        return taskRepository.add(task);
+        Optional<Task> optTask = taskRepository.add(task);
+        if (optTask.isEmpty()) {
+            throw new IllegalStateException("Task was not added");
+        }
+        return optTask.get();
     }
 
     public Task findById(int id) {
         Optional<Task> optionalTask = taskRepository.findById(id);
         if (optionalTask.isEmpty()) {
-            throw new IllegalArgumentException("Task with that id already exists");
+            throw new TaskNotFoundById("Task not found");
         }
         return optionalTask.get();
     }

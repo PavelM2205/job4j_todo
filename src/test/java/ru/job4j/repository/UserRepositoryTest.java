@@ -12,10 +12,8 @@ import org.junit.jupiter.api.Test;
 import ru.job4j.model.User;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UserRepositoryTest {
     private static SessionFactory sf;
@@ -69,21 +67,6 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void whenAddTwoUsersWithSameLoginThenMustBeException() {
-        UserRepository store = new UserRepository(sf);
-        User user1 = new User();
-        user1.setName("Ivan");
-        user1.setLogin("login");
-        user1.setPassword("password");
-        User user2 = new User();
-        user2.setName("Egor");
-        user2.setLogin(user1.getLogin());
-        user2.setPassword("password2");
-        store.addUser(user1);
-        assertThrows(IllegalArgumentException.class, () -> store.addUser(user2));
-    }
-
-    @Test
     public void whenAddTwoUsersThenFindAllReturnsBoth() {
         UserRepository store = new UserRepository(sf);
         User user1 = new User();
@@ -126,27 +109,6 @@ public class UserRepositoryTest {
         assertThat(userFromDB.getName()).isEqualTo(changed.getName());
         assertThat(userFromDB.getLogin()).isEqualTo(changed.getLogin());
         assertThat(userFromDB.getPassword()).isEqualTo(changed.getPassword());
-    }
-
-    @Test
-    public void whenUpdateOfUserViolatesLoginConstraintThenMustBeException() {
-        UserRepository store = new UserRepository(sf);
-        User user1 = new User();
-        user1.setName("Ivan");
-        user1.setLogin("login1");
-        user1.setPassword("password1");
-        User user2 = new User();
-        user2.setName("Petr");
-        user2.setLogin("login2");
-        user2.setPassword("password2");
-        store.addUser(user1);
-        store.addUser(user2);
-        User changed = new User();
-        changed.setId(user1.getId());
-        changed.setName("Changed");
-        changed.setLogin(user2.getLogin());
-        changed.setPassword("changedPassword");
-        assertThrows(IllegalArgumentException.class, () -> store.update(changed));
     }
 
     @Test

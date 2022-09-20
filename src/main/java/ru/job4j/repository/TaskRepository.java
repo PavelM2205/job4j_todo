@@ -27,19 +27,21 @@ public class TaskRepository {
     private static final String SET_DONE = "UPDATE Task SET done = true WHERE id = :fId";
     private final SessionFactory sf;
 
-    public Task add(Task task) {
+    public Optional<Task> add(Task task) {
+        Optional<Task> result = Optional.empty();
         Transaction transaction = null;
         try (Session session = sf.openSession()) {
             transaction = session.beginTransaction();
             session.persist(task);
             transaction.commit();
+            result = Optional.of(task);
         } catch (Exception exc) {
             LOG.error("Exception when adding Task into DB: ", exc);
             if (transaction != null) {
                 transaction.rollback();
             }
         }
-        return task;
+        return result;
     }
 
     public Optional<Task> findById(int id) {

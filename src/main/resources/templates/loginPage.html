@@ -34,6 +34,9 @@
                     <span style="margin-left: 37%">
                         <a th:href="@{/registrationPage}">Зарегистрироваться</a>
                     </span>
+                    <div th:if="${userNotFound}" class="alert alert-danger" role="alert">
+                        Неверный логин и/или пароль!
+                    </div>
                 </form>
             </div>
         </div>

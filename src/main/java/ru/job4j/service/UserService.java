@@ -2,10 +2,13 @@ package ru.job4j.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.job4j.exception.UserWithSuchLoginAlreadyExists;
+import ru.job4j.exception.UserWithSuchLoginAndPasswordDoesNotExists;
 import ru.job4j.model.User;
 import ru.job4j.repository.UserRepository;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -14,11 +17,19 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User addUser(User user) {
-        return userRepository.addUser(user).get();
+        Optional<User> optUser = userRepository.addUser(user);
+        if (optUser.isEmpty()) {
+            throw new UserWithSuchLoginAlreadyExists("User was not added");
+        }
+        return optUser.get();
     }
 
-    public Optional<User> findById(int id) {
-        return userRepository.findById(id);
+    public User findById(int id) {
+        Optional<User> optUser = userRepository.findById(id);
+        if (optUser.isEmpty()) {
+            throw new NoSuchElementException("User was not found");
+        }
+        return optUser.get();
     }
 
     public List<User> findAll() {
@@ -36,7 +47,7 @@ public class UserService {
     public User findByLoginAndPassword(String login, String password) {
         Optional<User> optUser = userRepository.findByLoginAndPassword(login, password);
         if (optUser.isEmpty()) {
-            throw new IllegalArgumentException(
+            throw new UserWithSuchLoginAndPasswordDoesNotExists(
                     "User with this login and password does not exist");
         }
         return optUser.get();

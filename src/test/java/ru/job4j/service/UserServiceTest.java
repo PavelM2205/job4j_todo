@@ -8,11 +8,20 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import ru.job4j.exception.UserWithSuchLoginAlreadyExists;
+import ru.job4j.exception.UserWithSuchLoginAndPasswordDoesNotExists;
+import ru.job4j.model.User;
 import ru.job4j.repository.UserRepository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
-class UserServiceTest {
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+public class UserServiceTest {
     private static SessionFactory sf;
 
     @BeforeAll
@@ -38,10 +47,27 @@ class UserServiceTest {
     }
 
     @Test
-    void whenFindByLoginAndPasswordReturnsOptionalEmptyThenMustBeException() {
+    public void whenFindByLoginAndPasswordReturnsOptionalEmptyThenMustBeException() {
         UserRepository store = new UserRepository(sf);
         UserService service = new UserService(store);
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(UserWithSuchLoginAndPasswordDoesNotExists.class, () ->
                 service.findByLoginAndPassword("login", "password"));
+    }
+
+    @Test
+    public void whenAddReturnsOptionalEmptyThenMustBeException() {
+        UserRepository userStore = mock(UserRepository.class);
+        UserService service = new UserService(userStore);
+        User user = mock(User.class);
+        when(userStore.addUser(user)).thenReturn(Optional.empty());
+        assertThrows(UserWithSuchLoginAlreadyExists.class, () -> service.addUser(user));
+    }
+
+    @Test
+    public void whenFindByIdReturnsOptionalEmptyThenMustBeException() {
+        UserRepository userStore = mock(UserRepository.class);
+        UserService service = new UserService(userStore);
+        when(userStore.findById(any(Integer.class))).thenReturn(Optional.empty());
+        assertThrows(NoSuchElementException.class, () -> service.findById(1));
     }
 }
