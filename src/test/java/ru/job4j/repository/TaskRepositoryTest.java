@@ -59,7 +59,8 @@ public class TaskRepositoryTest {
 
     @Test
     public void whenAdd() {
-        TaskRepository repo = new TaskRepository(sf);
+        CrudRepository cr = new CrudRepository(sf);
+        TaskRepository repo = new TaskRepository(cr);
         Task task = new Task();
         task.setName("name");
         task.setDescription("Text");
@@ -76,7 +77,8 @@ public class TaskRepositoryTest {
 
     @Test
     public void whenAddTwoTasksAndFindAllThenReturnsBoth() {
-        TaskRepository repo = new TaskRepository(sf);
+        CrudRepository cr = new CrudRepository(sf);
+        TaskRepository repo = new TaskRepository(cr);
         Task task1 = new Task();
         task1.setName("1");
         task1.setDescription("task #1");
@@ -104,7 +106,8 @@ public class TaskRepositoryTest {
 
     @Test
     public void whenUpdateThenMustBeChangedTask() {
-        TaskRepository repo = new TaskRepository(sf);
+        CrudRepository cr = new CrudRepository(sf);
+        TaskRepository repo = new TaskRepository(cr);
         Task task = new Task();
         task.setName("t1");
         task.setDescription("Task");
@@ -115,9 +118,8 @@ public class TaskRepositoryTest {
         changedTask.setDescription("Changed Task");
         changedTask.setDone(true);
         changedTask.setId(task.getId());
-        boolean update = repo.update(changedTask);
+        repo.update(changedTask);
         Task taskFromDB = repo.findById(task.getId()).get();
-        assertThat(update).isTrue();
         assertThat(taskFromDB.getName()).isEqualTo(changedTask.getName());
         assertThat(taskFromDB.getDescription()).isEqualTo(changedTask.getDescription());
         assertThat(taskFromDB.getCreated()).isEqualToIgnoringNanos(changedTask.getCreated());
@@ -126,20 +128,21 @@ public class TaskRepositoryTest {
 
     @Test
     public void whenDeleteThenFindAllReturnsListWithSizeZero() {
-        TaskRepository repo = new TaskRepository(sf);
+        CrudRepository cr = new CrudRepository(sf);
+        TaskRepository repo = new TaskRepository(cr);
         Task task = new Task();
         task.setName("name");
         task.setDescription("Task");
         task.setDone(false);
         repo.add(task);
-        boolean delete = repo.delete(task.getId());
-        assertThat(delete).isTrue();
+        repo.delete(task.getId());
         assertThat(repo.findAll().size()).isEqualTo(0);
     }
 
     @Test
     public void whenSetDoneThenDoneMustBeTrue() {
-        TaskRepository repo = new TaskRepository(sf);
+        CrudRepository cr = new CrudRepository(sf);
+        TaskRepository repo = new TaskRepository(cr);
         Task task = new Task();
         task.setName("name");
         task.setDescription("description");

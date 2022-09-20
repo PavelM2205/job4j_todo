@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import ru.job4j.exception.UserWithSuchLoginAlreadyExists;
 import ru.job4j.exception.UserWithSuchLoginAndPasswordDoesNotExists;
 import ru.job4j.model.User;
+import ru.job4j.repository.CrudRepository;
 import ru.job4j.repository.UserRepository;
 
 import java.util.NoSuchElementException;
@@ -48,7 +49,8 @@ public class UserServiceTest {
 
     @Test
     public void whenFindByLoginAndPasswordReturnsOptionalEmptyThenMustBeException() {
-        UserRepository store = new UserRepository(sf);
+        CrudRepository cr = new CrudRepository(sf);
+        UserRepository store = new UserRepository(cr);
         UserService service = new UserService(store);
         assertThrows(UserWithSuchLoginAndPasswordDoesNotExists.class, () ->
                 service.findByLoginAndPassword("login", "password"));

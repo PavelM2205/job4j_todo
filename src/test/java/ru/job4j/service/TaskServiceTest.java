@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.job4j.exception.TaskNotFoundById;
 import ru.job4j.model.Task;
+import ru.job4j.repository.CrudRepository;
 import ru.job4j.repository.TaskRepository;
 
 import java.util.Optional;
@@ -31,7 +32,8 @@ public class TaskServiceTest {
 
     @Test
     public void whenTaskNotExistWithSpecifyIdThenFindByIdThrowsException() {
-        TaskRepository repository = new TaskRepository(sf);
+        CrudRepository cr = new CrudRepository(sf);
+        TaskRepository repository = new TaskRepository(cr);
         TaskService taskService = new TaskService(repository);
         assertThrows(TaskNotFoundById.class, () -> taskService.findById(0));
     }

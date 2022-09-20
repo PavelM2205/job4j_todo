@@ -42,15 +42,15 @@ public class TaskService {
         return taskRepository.findAllUndone();
     }
 
-    public boolean update(Task task) {
-        return taskRepository.update(task);
+    public void update(Task task) {
+        taskRepository.update(task);
     }
 
-    public boolean setDone(int id) {
-        return taskRepository.setDone(id);
+    public void setDone(int id) {
+        taskRepository.setDone(id);
     }
 
-    public boolean delete(int id) {
-        return taskRepository.delete(id);
+    public void delete(int id) {
+        taskRepository.delete(id);
     }
 }

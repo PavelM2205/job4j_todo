@@ -19,7 +19,7 @@ public class UserService {
     public User addUser(User user) {
         Optional<User> optUser = userRepository.addUser(user);
         if (optUser.isEmpty()) {
-            throw new UserWithSuchLoginAlreadyExists("User was not added");
+            throw new UserWithSuchLoginAlreadyExists("User with such login already exists");
         }
         return optUser.get();
     }
@@ -36,12 +36,12 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public boolean update(User user) {
-        return userRepository.update(user);
+    public void update(User user) {
+        userRepository.update(user);
     }
 
-    public boolean delete(User user) {
-        return userRepository.delete(user);
+    public void delete(User user) {
+        userRepository.delete(user);
     }
 
     public User findByLoginAndPassword(String login, String password) {

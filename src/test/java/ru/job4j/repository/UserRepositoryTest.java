@@ -41,7 +41,8 @@ public class UserRepositoryTest {
 
     @Test
     public void whenAddUser() {
-        UserRepository store = new UserRepository(sf);
+        CrudRepository cr = new CrudRepository(sf);
+        UserRepository store = new UserRepository(cr);
         User user = new User();
         user.setName("Pavel");
         user.setLogin("login");
@@ -57,7 +58,8 @@ public class UserRepositoryTest {
 
     @Test
     public void whenAddUserThenReturnsOptionalUserWithId() {
-        UserRepository store = new UserRepository(sf);
+        CrudRepository cr = new CrudRepository(sf);
+        UserRepository store = new UserRepository(cr);
         User user = new User();
         user.setName("Pavel");
         user.setLogin("login");
@@ -68,7 +70,8 @@ public class UserRepositoryTest {
 
     @Test
     public void whenAddTwoUsersThenFindAllReturnsBoth() {
-        UserRepository store = new UserRepository(sf);
+        CrudRepository cr = new CrudRepository(sf);
+        UserRepository store = new UserRepository(cr);
         User user1 = new User();
         user1.setName("Ivan");
         user1.setLogin("login1");
@@ -93,7 +96,8 @@ public class UserRepositoryTest {
 
     @Test
     public void whenUpdate() {
-        UserRepository store = new UserRepository(sf);
+        CrudRepository cr = new CrudRepository(sf);
+        UserRepository store = new UserRepository(cr);
         User user = new User();
         user.setName("Pavel");
         user.setLogin("login");
@@ -113,7 +117,8 @@ public class UserRepositoryTest {
 
     @Test
     public void whenDelete() {
-        UserRepository store = new UserRepository(sf);
+        CrudRepository cr = new CrudRepository(sf);
+        UserRepository store = new UserRepository(cr);
         User user = new User();
         user.setName("Pavel");
         user.setLogin("login");
@@ -125,7 +130,8 @@ public class UserRepositoryTest {
 
     @Test
     public void whenFindByLoginAndPassword() {
-        UserRepository store = new UserRepository(sf);
+        CrudRepository cr = new CrudRepository(sf);
+        UserRepository store = new UserRepository(cr);
         User user = new User();
         user.setName("Ivan");
         user.setLogin("login");
