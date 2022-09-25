@@ -6,7 +6,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.job4j.model.Task;
+import ru.job4j.model.User;
 import ru.job4j.service.TaskService;
+
+import javax.servlet.http.HttpSession;
 
 @Controller
 @AllArgsConstructor
@@ -19,7 +22,10 @@ public class TaskController {
     }
 
     @PostMapping("/addTask")
-    public String addTask(@ModelAttribute Task task, RedirectAttributes redirectAttributes) {
+    public String addTask(@ModelAttribute Task task, RedirectAttributes redirectAttributes,
+                          HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        task.setUser(user);
         taskService.add(task);
         redirectAttributes.addFlashAttribute("addSuccess", true);
         return "redirect:/addTaskPage";

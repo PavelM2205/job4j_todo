@@ -45,6 +45,7 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Задача</th>
+                <th scope="col">Инициатор задачи</th>
                 <th scope="col">Дата создания</th>
                 <th scope="col">Выполнение</th>
             </tr>
@@ -55,6 +56,7 @@
                 <td>
                     <a th:href="@{|/taskInfoPage/${task.id}|}" th:text="${task.name}"></a>
                 </td>
+                <td th:text="${task.getUser().getName()}"></td>
                 <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy HH:mm:ss')}"></td>
                 <td th:if="${task.done}" th:text="Выполнено"></td>
                 <td th:if="${task.done == false}"></td>

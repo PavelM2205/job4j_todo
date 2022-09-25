@@ -11,6 +11,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.job4j.model.Task;
+import ru.job4j.model.User;
+
 import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
@@ -45,6 +47,7 @@ public class TaskRepositoryTest {
         try (Session session = sf.openSession()) {
             transaction = session.beginTransaction();
             session.createMutationQuery("DELETE Task").executeUpdate();
+            session.createMutationQuery("DELETE User").executeUpdate();
         } catch (Exception exc) {
             if (transaction != null) {
                 transaction.rollback();
@@ -79,14 +82,22 @@ public class TaskRepositoryTest {
     public void whenAddTwoTasksAndFindAllThenReturnsBoth() {
         CrudRepository cr = new CrudRepository(sf);
         TaskRepository repo = new TaskRepository(cr);
+        UserRepository userRepository = new UserRepository(cr);
+        User user = new User();
+        user.setName("Admin");
+        user.setLogin("login");
+        user.setPassword("password");
+        userRepository.addUser(user);
         Task task1 = new Task();
         task1.setName("1");
         task1.setDescription("task #1");
         task1.setDone(true);
+        task1.setUser(user);
         Task task2 = new Task();
         task2.setDescription("task #2");
         task2.setName("2");
         task2.setDone(false);
+        task2.setUser(user);
         repo.add(task1);
         repo.add(task2);
         List<Task> tasksFromDB = repo.findAll();
@@ -96,12 +107,20 @@ public class TaskRepositoryTest {
                 .isEqualTo(task1.getDescription());
         assertThat(tasksFromDB.get(0).getCreated()).isEqualToIgnoringNanos(task1.getCreated());
         assertThat(tasksFromDB.get(0).isDone()).isEqualTo(task1.isDone());
+        assertThat(tasksFromDB.get(0).getUser().getId()).isEqualTo(user.getId());
+        assertThat(tasksFromDB.get(0).getUser().getName()).isEqualTo(user.getName());
+        assertThat(tasksFromDB.get(0).getUser().getLogin()).isEqualTo(user.getLogin());
+        assertThat(tasksFromDB.get(0).getUser().getPassword()).isEqualTo(user.getPassword());
         assertThat(tasksFromDB.get(1).getId()).isEqualTo(task2.getId());
         assertThat(tasksFromDB.get(1).getName()).isEqualTo(task2.getName());
         assertThat(tasksFromDB.get(1).getDescription())
                 .isEqualTo(task2.getDescription());
         assertThat(tasksFromDB.get(1).getCreated()).isEqualToIgnoringNanos(task2.getCreated());
         assertThat(tasksFromDB.get(1).isDone()).isEqualTo(task2.isDone());
+        assertThat(tasksFromDB.get(1).getUser().getId()).isEqualTo(user.getId());
+        assertThat(tasksFromDB.get(1).getUser().getName()).isEqualTo(user.getName());
+        assertThat(tasksFromDB.get(1).getUser().getLogin()).isEqualTo(user.getLogin());
+        assertThat(tasksFromDB.get(1).getUser().getPassword()).isEqualTo(user.getPassword());
     }
 
     @Test

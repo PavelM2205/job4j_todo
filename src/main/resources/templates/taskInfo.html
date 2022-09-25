@@ -23,6 +23,7 @@
                 </div>
                 <h5 class="card-title" th:text="${task.name}"></h5>
                 <h6 class="card-subtitle mb-2 text-muted" th:text="${#temporals.format(task.created, 'dd-MM-yyyy HH:mm:ss')}"></h6>
+                <span class="ard-subtitle mb-2 text-muted">Инициатор: </span><span th:text="${task.getUser().getName()}"></span>
                 <p class="card-text" th:text="${task.description}" style="margin-top: 5%; margin-bottom: 5%"></p>
                 <div class="row">
                 <form method="POST" th:action="@{/madeTaskDone}" style="margin-left: 2.5%">
