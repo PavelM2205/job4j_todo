@@ -16,25 +16,49 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 public class UserRepositoryTest {
-    private static SessionFactory sf;
+    private static StandardServiceRegistry registry =
+            new StandardServiceRegistryBuilder().configure().build();
+    private static SessionFactory sf = new MetadataSources(registry).buildMetadata()
+            .buildSessionFactory();
 
     @BeforeAll
-    public static void getSf() {
-        StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-                .configure().build();
-        sf = new MetadataSources(registry).buildMetadata().buildSessionFactory();
+    public static void cleanTableBefore() {
+        Transaction transaction = null;
+        Session session = null;
+        try {
+            session = sf.openSession();
+            transaction = session.beginTransaction();
+            session.createMutationQuery("DELETE Task").executeUpdate();
+            session.createMutationQuery("DELETE User").executeUpdate();
+            transaction.commit();
+        } catch (Exception exc) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw exc;
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
     }
 
     @AfterEach
     public void cleanTable() {
         Transaction transaction = null;
-        try (Session session = sf.openSession()) {
+        Session session = null;
+        try {
+            session = sf.openSession();
             transaction = session.beginTransaction();
             session.createMutationQuery("DELETE User").executeUpdate();
             transaction.commit();
         } catch (Exception exc) {
             if (transaction != null) {
                 transaction.rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
             }
         }
     }

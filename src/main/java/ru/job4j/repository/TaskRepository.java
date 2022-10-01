@@ -13,13 +13,16 @@ import java.util.Optional;
 @AllArgsConstructor
 public class TaskRepository {
     private static final Logger LOG = LoggerFactory.getLogger(TaskRepository.class);
-    private static final String FIND_BY_ID = "FROM Task as t WHERE t.id = :fId";
+    private static final String FIND_BY_ID =
+            "FROM Task as t JOIN FETCH priority WHERE t.id = :fId";
     private static final String UPDATE = "UPDATE Task SET name = :fName, "
             + "description = :fDescription, created = :fCreated, done = :fDone WHERE id = :fId";
-    private static final String FIND_ALL = "FROM Task";
+    private static final String FIND_ALL = "FROM Task JOIN FETCH priority";
     private static final String DELETE_BY_ID = "DELETE Task WHERE id = :fId";
-    private static final String FIND_ALL_DONE = "FROM Task WHERE done = true";
-    private static final String FIND_ALL_UNDONE = "FROM Task WHERE done = false";
+    private static final String FIND_ALL_DONE =
+            "FROM Task JOIN FETCH priority WHERE done = true";
+    private static final String FIND_ALL_UNDONE =
+            "FROM Task JOIN FETCH priority WHERE done = false";
     private static final String SET_DONE = "UPDATE Task SET done = true WHERE id = :fId";
     private final CrudRepository crudRepository;
 
