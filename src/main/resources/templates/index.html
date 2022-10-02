@@ -46,6 +46,7 @@
                 <th scope="col">#</th>
                 <th scope="col">Задача</th>
                 <th scope="col">Приоритет</th>
+                <th scope="col">Категория</th>
                 <th scope="col">Инициатор задачи</th>
                 <th scope="col">Дата создания</th>
                 <th scope="col">Выполнение</th>
@@ -58,6 +59,11 @@
                     <a th:href="@{|/taskInfoPage/${task.id}|}" th:text="${task.name}"></a>
                 </td>
                 <td th:text="${task.getPriority().getName()}"></td>
+                <td>
+                    <p th:each="category : ${task.getCategories()}" style="margin-bottom: -2%">
+                    <span th:text="${category.getName()}"></span>
+                    </p>
+                </td>
                 <td th:text="${task.getUser().getName()}"></td>
                 <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy HH:mm:ss')}"></td>
                 <td th:if="${task.done}" th:text="Выполнено"></td>

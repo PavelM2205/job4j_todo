@@ -18,5 +18,9 @@
     <include file="scripts/008_dml_update_tasks.sql" relativeToChangelogFile="true"/>
     <include file="scripts/009_dml_insert_into_todo_user.sql" relativeToChangelogFile="true"/>
     <include file="scripts/010_dml_update_tasks.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/011_ddl_create_categories_table.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/012_dml_insert_into_categories.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/013_ddl_categories_and_tasks.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/014_dml_insert_into_categories_and_tasks.sql" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

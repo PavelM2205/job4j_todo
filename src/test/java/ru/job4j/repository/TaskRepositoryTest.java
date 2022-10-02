@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import ru.job4j.model.Category;
 import ru.job4j.model.Priority;
 import ru.job4j.model.Task;
 import ru.job4j.model.User;
@@ -74,6 +75,7 @@ public class TaskRepositoryTest {
         CrudRepository cr = new CrudRepository(sf);
         TaskRepository repo = new TaskRepository(cr);
         UserRepository userRepository = new UserRepository(cr);
+        CategoryRepository categoryRepository = new CategoryRepository(cr);
         User user = new User();
         user.setName("Admin");
         user.setLogin("login");
@@ -89,6 +91,8 @@ public class TaskRepositoryTest {
         task.setDone(true);
         task.setUser(user);
         task.setPriority(priority);
+        Category category = categoryRepository.findById(1).get();
+        task.setCategories(List.of(category));
         repo.add(task);
         Task taskFromDB = repo.findById(task.getId()).get();
         assertThat(task.getId()).isNotEqualTo(0);
@@ -97,6 +101,8 @@ public class TaskRepositoryTest {
         assertThat(taskFromDB.getCreated()).isEqualToIgnoringNanos(task.getCreated());
         assertThat(taskFromDB.isDone()).isEqualTo(task.isDone());
         assertThat(taskFromDB.getDescription()).isEqualTo(task.getDescription());
+        assertThat(taskFromDB.getCategories().get(0).getId()).isEqualTo(category.getId());
+        assertThat(taskFromDB.getCategories().get(0).getName()).isEqualTo(category.getName());
     }
 
     @Test
@@ -104,6 +110,7 @@ public class TaskRepositoryTest {
         CrudRepository cr = new CrudRepository(sf);
         TaskRepository repo = new TaskRepository(cr);
         UserRepository userRepository = new UserRepository(cr);
+        CategoryRepository categoryRepository = new CategoryRepository(cr);
         User user = new User();
         user.setName("Admin");
         user.setLogin("login");
@@ -117,18 +124,21 @@ public class TaskRepositoryTest {
         priority2.setId(2);
         priority2.setName("normal");
         priority2.setPosition(2);
+        Category category = categoryRepository.findById(1).get();
         Task task1 = new Task();
         task1.setName("1");
         task1.setDescription("task #1");
         task1.setDone(true);
         task1.setUser(user);
         task1.setPriority(priority1);
+        task1.setCategories(List.of(category));
         Task task2 = new Task();
         task2.setDescription("task #2");
         task2.setName("2");
         task2.setDone(false);
         task2.setUser(user);
         task2.setPriority(priority2);
+        task2.setCategories(List.of(category));
         repo.add(task1);
         repo.add(task2);
         List<Task> tasksFromDB = repo.findAll();
@@ -145,6 +155,10 @@ public class TaskRepositoryTest {
         assertThat(tasksFromDB.get(0).getPriority().getId()).isEqualTo(priority1.getId());
         assertThat(tasksFromDB.get(0).getPriority().getName()).isEqualTo(priority1.getName());
         assertThat(tasksFromDB.get(0).getPriority().getPosition()).isEqualTo(priority1.getPosition());
+        assertThat(tasksFromDB.get(0).getCategories().get(0).getId())
+                .isEqualTo(category.getId());
+        assertThat(tasksFromDB.get(0).getCategories().get(0).getName())
+                .isEqualTo(category.getName());
         assertThat(tasksFromDB.get(1).getId()).isEqualTo(task2.getId());
         assertThat(tasksFromDB.get(1).getName()).isEqualTo(task2.getName());
         assertThat(tasksFromDB.get(1).getDescription())
@@ -158,6 +172,10 @@ public class TaskRepositoryTest {
         assertThat(tasksFromDB.get(1).getPriority().getId()).isEqualTo(priority2.getId());
         assertThat(tasksFromDB.get(1).getPriority().getName()).isEqualTo(priority2.getName());
         assertThat(tasksFromDB.get(1).getPriority().getPosition()).isEqualTo(priority2.getPosition());
+        assertThat(tasksFromDB.get(1).getCategories().get(0).getId())
+                .isEqualTo(category.getId());
+        assertThat(tasksFromDB.get(1).getCategories().get(0).getName())
+                .isEqualTo(category.getName());
     }
 
     @Test
@@ -165,6 +183,7 @@ public class TaskRepositoryTest {
         CrudRepository cr = new CrudRepository(sf);
         TaskRepository repo = new TaskRepository(cr);
         UserRepository userRepository = new UserRepository(cr);
+        CategoryRepository categoryRepository = new CategoryRepository(cr);
         Priority priority1 = new Priority();
         priority1.setId(1);
         priority1.setName("high");
@@ -173,6 +192,7 @@ public class TaskRepositoryTest {
         priority2.setId(2);
         priority2.setName("normal");
         priority2.setPosition(2);
+        Category category = categoryRepository.findById(1).get();
         User user = new User();
         user.setName("Admin");
         user.setLogin("login");
@@ -182,6 +202,7 @@ public class TaskRepositoryTest {
         task.setDescription("Task");
         task.setDone(false);
         task.setPriority(priority1);
+        task.setCategories(List.of(category));
         repo.add(task);
         Task changedTask = new Task();
         changedTask.setName("chName");
@@ -189,6 +210,7 @@ public class TaskRepositoryTest {
         changedTask.setDone(true);
         changedTask.setId(task.getId());
         changedTask.setPriority(priority2);
+        changedTask.setCategories(List.of(category));
         repo.update(changedTask);
         Task taskFromDB = repo.findById(task.getId()).get();
         assertThat(taskFromDB.getName()).isEqualTo(changedTask.getName());
@@ -198,6 +220,8 @@ public class TaskRepositoryTest {
         assertThat(taskFromDB.getPriority().getId()).isEqualTo(priority2.getId());
         assertThat(taskFromDB.getPriority().getName()).isEqualTo(priority2.getName());
         assertThat(taskFromDB.getPriority().getPosition()).isEqualTo(priority2.getPosition());
+        assertThat(taskFromDB.getCategories().get(0).getId()).isEqualTo(category.getId());
+        assertThat(taskFromDB.getCategories().get(0).getName()).isEqualTo(category.getName());
     }
 
     @Test
@@ -205,11 +229,13 @@ public class TaskRepositoryTest {
         CrudRepository cr = new CrudRepository(sf);
         TaskRepository repo = new TaskRepository(cr);
         UserRepository userRepository = new UserRepository(cr);
+        CategoryRepository categoryRepository = new CategoryRepository(cr);
         User user = new User();
         user.setName("Admin");
         user.setLogin("login");
         user.setPassword("password");
         userRepository.addUser(user);
+        Category category = categoryRepository.findById(1).get();
         Priority priority = new Priority();
         priority.setId(1);
         priority.setName("high");
@@ -220,6 +246,7 @@ public class TaskRepositoryTest {
         task.setDone(false);
         task.setUser(user);
         task.setPriority(priority);
+        task.setCategories(List.of(category));
         repo.add(task);
         System.out.println("Result: " + repo.findById(task.getId()));
         repo.delete(task.getId());
@@ -231,6 +258,8 @@ public class TaskRepositoryTest {
         CrudRepository cr = new CrudRepository(sf);
         TaskRepository repo = new TaskRepository(cr);
         UserRepository userRepository = new UserRepository(cr);
+        CategoryRepository categoryRepository = new CategoryRepository(cr);
+        Category category = categoryRepository.findById(1).get();
         User user = new User();
         user.setName("Admin");
         user.setLogin("login");
@@ -246,6 +275,7 @@ public class TaskRepositoryTest {
         task.setDone(false);
         task.setUser(user);
         task.setPriority(priority);
+        task.setCategories(List.of(category));
         repo.add(task);
         repo.setDone(task.getId());
         Task taskFromDB = repo.findById(task.getId()).get();

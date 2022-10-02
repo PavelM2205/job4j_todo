@@ -31,8 +31,34 @@
                         <label for="description" class="form-label">Описание</label>
                         <textarea class="form-control" name="description" id="description" cols="73" rows="5"></textarea>
                     </div>
+                    <div class="row justify-content-between">
+                        <div class="col-4">
+                            <span>Категория:</span>
+                            <p></p>
+                            <div th:each="category : ${categories}">
+                            <div class="form-check">
+                                <input name="categoryId" class="form-check-input" type="checkbox" th:value="${category.getId()}" id="flexCheckDefault">
+                                <label th:text="${category.getName()}" class="form-check-label" for="flexCheckDefault"></label>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <span>Приоритет:</span>
+                            <p></p>
+                            <div th:each="priority : ${priorities}">
+                            <div class="form-check">
+                                <input checked th:value="${priority.getId()}" class="form-check-input" type="radio" name="priorityId" id="priority">
+                                <label th:text="${priority.getName()}" class="form-check-label" for="priority"></label>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p></p>
                     <div th:if="${addSuccess}" class="alert alert-success text-center" role="alert">
                         Задача успешно добавлена !
+                    </div>
+                    <div th:if="${categoryNotSpecify}" class="alert alert-danger" role="alert">
+                        Необходимо выбрать хотя бы одну категорию !
                     </div>
                     <button type="submit" class="btn btn-primary">Добавить</button>
                     <span style="margin-left: 45%">
