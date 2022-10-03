@@ -50,8 +50,10 @@ public class TaskController {
     }
 
     @GetMapping("/taskInfoPage/{taskId}")
-    public String taskInfoPage(@PathVariable("taskId") int id, Model model) {
-        model.addAttribute("task", taskService.findById(id));
+    public String taskInfoPage(@PathVariable("taskId") int id, Model model,
+                               HttpSession httpSession) {
+        User user = (User) httpSession.getAttribute("user");
+        model.addAttribute("task", taskService.findById(id, user));
         return "taskInfo";
     }
 
@@ -64,8 +66,10 @@ public class TaskController {
     }
 
     @GetMapping("/editTaskPage/{taskId}")
-    public String editTask(@PathVariable("taskId") int id, Model model) {
-        model.addAttribute("current_task", taskService.findById(id));
+    public String editTask(@PathVariable("taskId") int id, Model model,
+                           HttpSession httpSession) {
+        User user = (User) httpSession.getAttribute("user");
+        model.addAttribute("current_task", taskService.findById(id, user));
         return "editTask";
     }
 

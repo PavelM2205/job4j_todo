@@ -16,4 +16,6 @@ public class User {
     private String name;
     private String login;
     private String password;
+    @Column(name = "time_zone")
+    private String timeZone;
 }

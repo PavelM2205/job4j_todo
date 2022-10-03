@@ -15,7 +15,6 @@ public class PriorityRepository {
     private static final String FIND_ALL = "FROM Priority";
     private static final String FIND_BY_ID = "FROM Priority WHERE id = :fId";
 
-
     public List<Priority> findAll() {
         return crudRepository.query(FIND_ALL, Priority.class);
     }

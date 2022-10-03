@@ -19,6 +19,7 @@ public class Task {
     private String name;
     private String description;
     private LocalDateTime created = LocalDateTime.now();
+
     private static final DateTimeFormatter FORMATTER =
             DateTimeFormatter.ofPattern("dd-MM-EEEE-yyyy HH:mm:ss");
     private boolean done;
